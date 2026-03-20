@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: 'Outfit', sans-serif;
+  --font-display: 'Outfit', sans-serif;
+
+  --background: 0 0% 4%;
+  --foreground: 0 0% 100%;
+
+  --card: 0 0% 6%;
+  --card-foreground: 0 0% 100%;
+
+  --popover: 0 0% 6%;
+  --popover-foreground: 0 0% 100%;
+
+  --primary: 0 0% 100%;
+  --primary-foreground: 0 0% 4%;
+
+  --secondary: 0 0% 9%;
+  --secondary-foreground: 0 0% 100%;
+
+  --muted: 0 0% 9%;
+  --muted-foreground: 0 0% 64%;
+
+  --accent: 0 0% 100%;
+  --accent-foreground: 0 0% 4%;
+
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 0 0% 9%;
+  --input: 0 0% 9%;
+  --ring: 0 0% 100%;
+
+  --radius: 0rem;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-primary/30 selection:text-primary-foreground;
+    font-family: var(--font-sans);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    @apply tracking-tight font-bold;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted));
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Marquee Animation */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Font serif for italic headings */
+.font-serif {
+  font-family: 'Georgia', 'Times New Roman', serif;
+}
+
+/* Optimized CSS animations for performance */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes spin-slow {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.05); }
+}
+
+.animate-twinkle {
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 40s linear infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 8s ease-in-out infinite;
+}
+
+/* GPU acceleration for smoother animations */
+.will-change-auto {
+  will-change: auto;
+}
+
+/* Fix for mobile viewport */
+@supports (-webkit-touch-callout: none) {
+  .min-h-screen {
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* Image optimization */
+img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
