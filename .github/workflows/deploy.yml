@@ -1,31 +1,31 @@
-name: Deploy to GitHub Pages
+# This workflow will build the client and deploy it.
 
+name: Deploy Client
+
+# Controls when the workflow will run
 on:
   push:
     branches:
       - main
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+      uses: actions/checkout@v2
 
     - name: Install dependencies
       run: npm install
 
-    - name: Build project
-      run: npm run build
+    - name: Build client
+      run: npx vite build
 
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
+    - name: Deploy
+      uses: JamesIArmes/npm-publish@v1
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist
+        tag_name: 'latest'
+        path: './dist/public'
+        token: ${{ secrets.GITHUB_TOKEN }}
+        registry: https://npm.pkg.github.com
