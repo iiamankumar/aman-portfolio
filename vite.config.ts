@@ -8,6 +8,7 @@ export default defineConfig({
     react(),
     runtimeErrorOverlay(),
   ],
+  base: (process.env.VITE_BASE_PATH || "/").replace(/\/{2,}/g, "/"),
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
