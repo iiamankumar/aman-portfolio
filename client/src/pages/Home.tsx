@@ -7,9 +7,8 @@ import {
   SiPython, SiLinux, SiCss3, SiNotion, SiMarkdown, SiZod, SiTurborepo,
   SiC, SiOpenjdk, SiUbuntu
 } from "react-icons/si";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@shared/routes";
 import type { Project, Skill } from "@shared/schema";
+import { useProjects, useSkills } from "@/hooks/use-portfolio";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Navbar } from "@/components/Navbar";
@@ -129,8 +128,8 @@ const starPositions = [
 ];
 
 export default function Home() {
-  const { data: projects } = useQuery<Project[]>({ queryKey: [api.projects.list.path] });
-  const { data: skills } = useQuery<Skill[]>({ queryKey: [api.skills.list.path] });
+  const { data: projects } = useProjects();
+  const { data: skills } = useSkills();
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
