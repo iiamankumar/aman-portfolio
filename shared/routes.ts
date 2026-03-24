@@ -1,5 +1,15 @@
 import { z } from 'zod';
-import { insertMessageSchema, insertGuestbookSchema, projects, skills, testimonials, guestbookEntries } from './schema';
+
+// Validation Schemas
+export const insertMessageSchema = z.object({
+  name: z.string().min(1),
+  email: z.string().email(),
+  message: z.string().min(1),
+});
+
+export const insertGuestbookSchema = z.object({
+  message: z.string().min(1).max(500),
+});
 
 export const errorSchemas = {
   validation: z.object({
