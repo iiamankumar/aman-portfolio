@@ -7,13 +7,18 @@ const IS_REPLIT = !!process.env.REPL_ID;
 export async function setupAuth(app: Express) {
   app.set("trust proxy", 1);
 
+  // For local development or when not using Replit, use MemoryStore
   if (!IS_REPLIT) {
-    console.log("[auth] Running locally - Replit auth disabled.");
+    console.log("[auth] Running locally - Replit auth disabled, using MemoryStore.");
+    const MemoryStore = (await import("memorystore")).default(session);
     app.use(
       session({
         secret: process.env.SESSION_SECRET || "local-dev-secret",
         resave: false,
         saveUninitialized: false,
+        store: new MemoryStore({
+          checkPeriod: 86400000, // prune expired entries every 24h
+        }),
         cookie: { httpOnly: true, secure: false },
       })
     );
@@ -22,6 +27,7 @@ export async function setupAuth(app: Express) {
     return;
   }
 
+  // For Replit environment, use PostgreSQL session store
   const connectPg = (await import("connect-pg-simple")).default;
   const pgStore = connectPg(session);
   const sessionTtl = 7 * 24 * 60 * 60 * 1000;
