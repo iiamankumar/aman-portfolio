@@ -3,7 +3,7 @@ import type { Server } from "http";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
-import { setupAuth, registerAuthRoutes, isAuthenticated } from "./replit_integrations/auth";
+import { setupAuth, registerAuthRoutes, isAuthenticated, setupGitHubAuth } from "./replit_integrations/auth";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -12,6 +12,7 @@ export async function registerRoutes(
   
   await setupAuth(app);
   registerAuthRoutes(app);
+  setupGitHubAuth(app); // Add GitHub OAuth
 
   app.get(api.projects.list.path, async (req, res) => {
     const projects = await storage.getProjects();
@@ -61,16 +62,44 @@ export async function registerRoutes(
     res.json(entries);
   });
 
-  app.post(api.guestbook.submit.path, isAuthenticated, async (req: any, res) => {
+  app.post(api.guestbook.submit.path, async (req: any, res) => {
     try {
-      const user = req.user.claims;
+      // Check authentication
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+
       const messageSchema = z.object({ message: z.string().min(1).max(500) });
       const { message } = messageSchema.parse(req.body);
       
+      let userId: string;
+      let userName: string;
+      let userImage: string | null = null;
+
+      // Handle GitHub OAuth user
+      if (req.user.provider === "github") {
+        userId = req.user.id;
+        userName = `${req.user.firstName || ''} ${req.user.lastName || ''}`.trim() || req.user.email || 'Anonymous';
+        userImage = req.user.profileImageUrl || null;
+      }
+      // Handle Replit Auth (Google) user
+      else if (req.user.claims) {
+        const user = req.user.claims;
+        userId = user.sub;
+        userName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.email || 'Anonymous';
+        userImage = user.profile_image_url || null;
+      }
+      // Fallback
+      else {
+        userId = req.user.id || 'unknown';
+        userName = req.user.email || 'Anonymous';
+        userImage = req.user.profileImageUrl || null;
+      }
+      
       const entry = await storage.createGuestbookEntry({
-        userId: user.sub,
-        userName: `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.email || 'Anonymous',
-        userImage: user.profile_image_url || null,
+        userId,
+        userName,
+        userImage,
         message,
       });
       res.status(201).json(entry);

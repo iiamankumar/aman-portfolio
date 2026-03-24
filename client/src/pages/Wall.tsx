@@ -117,7 +117,7 @@ export default function Wall() {
             
             <div className="space-y-4">
               <a
-                href="/api/login"
+                href="/api/auth/github"
                 className="flex items-center justify-center gap-3 w-full py-3 px-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-colors"
                 data-testid="button-signin-github"
               >
