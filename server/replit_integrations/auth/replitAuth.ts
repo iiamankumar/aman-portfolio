@@ -1,54 +1,51 @@
 import passport from "passport";
 import session from "express-session";
+import MongoStore from "connect-mongo";
 import type { Express, RequestHandler } from "express";
 
 const IS_REPLIT = !!process.env.REPL_ID;
+const IS_PRODUCTION = process.env.NODE_ENV === "production";
 
 export async function setupAuth(app: Express) {
   app.set("trust proxy", 1);
 
-  // For local development or when not using Replit, use MemoryStore
-  if (!IS_REPLIT) {
-    console.log("[auth] Running locally - Replit auth disabled, using MemoryStore.");
-    const MemoryStore = (await import("memorystore")).default(session);
-    app.use(
-      session({
-        secret: process.env.SESSION_SECRET || "local-dev-secret",
-        resave: false,
-        saveUninitialized: false,
-        store: new MemoryStore({
-          checkPeriod: 86400000, // prune expired entries every 24h
-        }),
-        cookie: { httpOnly: true, secure: false },
-      })
-    );
-    app.use(passport.initialize());
-    app.use(passport.session());
-    return;
-  }
-
-  // For Replit environment, use PostgreSQL session store
-  const connectPg = (await import("connect-pg-simple")).default;
-  const pgStore = connectPg(session);
-  const sessionTtl = 7 * 24 * 60 * 60 * 1000;
-  const sessionStore = new pgStore({
-    conString: process.env.DATABASE_URL,
-    createTableIfMissing: false,
-    ttl: sessionTtl,
-    tableName: "sessions",
+  // Always use MongoDB session store (works for both local and production)
+  const mongoUrl = process.env.MONGO_URL || "mongodb://localhost:27017/portfolio";
+  const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 7 days
+  
+  console.log(`[auth] Using MongoDB session store${IS_REPLIT ? ' (Replit environment)' : ' (local development)'}`);
+  
+  const sessionStore = MongoStore.create({
+    mongoUrl: mongoUrl,
+    ttl: sessionTtl / 1000, // convert to seconds
+    touchAfter: 24 * 3600, // lazy session update - update session once in 24h
+    crypto: {
+      secret: process.env.SESSION_SECRET || "session-secret",
+    },
   });
 
   app.use(
     session({
-      secret: process.env.SESSION_SECRET!,
+      secret: process.env.SESSION_SECRET || "session-secret",
       store: sessionStore,
       resave: false,
       saveUninitialized: false,
-      cookie: { httpOnly: true, secure: true, maxAge: sessionTtl },
+      cookie: { 
+        httpOnly: true, 
+        secure: IS_PRODUCTION || IS_REPLIT, 
+        maxAge: sessionTtl 
+      },
     })
   );
+  
   app.use(passport.initialize());
   app.use(passport.session());
+
+  // If not in Replit environment, stop here (Google OAuth not available)
+  if (!IS_REPLIT) {
+    console.log("[auth] Replit auth (Google) disabled - not in Replit environment");
+    return;
+  }
 
   const client = await import("openid-client");
   const { Strategy } = await import("openid-client/passport");

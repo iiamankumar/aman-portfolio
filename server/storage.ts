@@ -1,71 +1,127 @@
-import { db } from "./db";
-import { desc } from "drizzle-orm";
-import {
-  projects, skills, testimonials, messages, guestbookEntries,
-  type Project, type InsertProject,
-  type Skill, type InsertSkill,
-  type Testimonial, type InsertTestimonial,
-  type Message, type InsertMessage,
-  type GuestbookEntry, type InsertGuestbookEntry
-} from "@shared/schema";
+import { connectDB } from "./db";
+import { Project, Skill, Testimonial, Message, GuestbookEntry, User } from "./models";
+import type { IProject, ISkill, ITestimonial, IMessage, IGuestbookEntry, IUser } from "./models";
 
-export interface IStorage {
-  getProjects(): Promise<Project[]>;
-  getSkills(): Promise<Skill[]>;
-  getTestimonials(): Promise<Testimonial[]>;
-  createMessage(message: InsertMessage): Promise<Message>;
-  
-  // Guestbook
-  getGuestbookEntries(): Promise<GuestbookEntry[]>;
-  createGuestbookEntry(entry: InsertGuestbookEntry): Promise<GuestbookEntry>;
-  
-  // Seed methods
-  createProject(project: InsertProject): Promise<Project>;
-  createSkill(skill: InsertSkill): Promise<Skill>;
-  createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial>;
+class Storage {
+  // Projects
+  async getProjects() {
+    await connectDB();
+    return await Project.find().sort({ createdAt: -1 });
+  }
+
+  async getProject(id: string) {
+    await connectDB();
+    return await Project.findById(id);
+  }
+
+  async createProject(data: Partial<IProject>) {
+    await connectDB();
+    return await Project.create(data);
+  }
+
+  async updateProject(id: string, data: Partial<IProject>) {
+    await connectDB();
+    return await Project.findByIdAndUpdate(id, data, { new: true });
+  }
+
+  async deleteProject(id: string) {
+    await connectDB();
+    return await Project.findByIdAndDelete(id);
+  }
+
+  // Skills
+  async getSkills() {
+    await connectDB();
+    return await Skill.find().sort({ category: 1, name: 1 });
+  }
+
+  async getSkill(id: string) {
+    await connectDB();
+    return await Skill.findById(id);
+  }
+
+  async createSkill(data: Partial<ISkill>) {
+    await connectDB();
+    return await Skill.create(data);
+  }
+
+  async updateSkill(id: string, data: Partial<ISkill>) {
+    await connectDB();
+    return await Skill.findByIdAndUpdate(id, data, { new: true });
+  }
+
+  async deleteSkill(id: string) {
+    await connectDB();
+    return await Skill.findByIdAndDelete(id);
+  }
+
+  // Testimonials
+  async getTestimonials() {
+    await connectDB();
+    return await Testimonial.find().sort({ createdAt: -1 });
+  }
+
+  async createTestimonial(data: Partial<ITestimonial>) {
+    await connectDB();
+    return await Testimonial.create(data);
+  }
+
+  // Messages
+  async getMessages() {
+    await connectDB();
+    return await Message.find().sort({ createdAt: -1 });
+  }
+
+  async createMessage(data: Partial<IMessage>) {
+    await connectDB();
+    return await Message.create(data);
+  }
+
+  // Guestbook Entries
+  async getGuestbookEntries() {
+    await connectDB();
+    return await GuestbookEntry.find().sort({ createdAt: -1 });
+  }
+
+  async createGuestbookEntry(data: Partial<IGuestbookEntry>) {
+    await connectDB();
+    return await GuestbookEntry.create(data);
+  }
+
+  async deleteGuestbookEntry(id: string) {
+    await connectDB();
+    return await GuestbookEntry.findByIdAndDelete(id);
+  }
+
+  // Users
+  async getUser(id: string) {
+    await connectDB();
+    return await User.findById(id);
+  }
+
+  async getUserByEmail(email: string) {
+    await connectDB();
+    return await User.findOne({ email });
+  }
+
+  async createUser(data: Partial<IUser>) {
+    await connectDB();
+    return await User.create(data);
+  }
+
+  async updateUser(id: string, data: Partial<IUser>) {
+    await connectDB();
+    return await User.findByIdAndUpdate(id, data, { new: true });
+  }
+
+  async upsertUser(email: string, data: Partial<IUser>) {
+    await connectDB();
+    return await User.findOneAndUpdate(
+      { email },
+      data,
+      { upsert: true, new: true }
+    );
+  }
 }
 
-export class DatabaseStorage implements IStorage {
-  async getProjects(): Promise<Project[]> {
-    return await db.select().from(projects);
-  }
-
-  async getSkills(): Promise<Skill[]> {
-    return await db.select().from(skills);
-  }
-
-  async getTestimonials(): Promise<Testimonial[]> {
-    return await db.select().from(testimonials);
-  }
-
-  async createMessage(message: InsertMessage): Promise<Message> {
-    const [newMessage] = await db.insert(messages).values(message).returning();
-    return newMessage;
-  }
-
-  async getGuestbookEntries(): Promise<GuestbookEntry[]> {
-    return await db.select().from(guestbookEntries).orderBy(desc(guestbookEntries.createdAt));
-  }
-
-  async createGuestbookEntry(entry: InsertGuestbookEntry): Promise<GuestbookEntry> {
-    const [newEntry] = await db.insert(guestbookEntries).values(entry).returning();
-    return newEntry;
-  }
-
-  async createProject(project: InsertProject): Promise<Project> {
-    const [newProject] = await db.insert(projects).values(project).returning();
-    return newProject;
-  }
-
-  async createSkill(skill: InsertSkill): Promise<Skill> {
-    const [newSkill] = await db.insert(skills).values(skill).returning();
-    return newSkill;
-  }
-
-  async createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial> {
-    const [newTestimonial] = await db.insert(testimonials).values(testimonial).returning();
-    return newTestimonial;
-  }
-}
-
-export const storage = new DatabaseStorage();
+export const storage = new Storage();

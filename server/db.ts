@@ -1,10 +1,25 @@
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import Database from "better-sqlite3";
-import * as schema from "@shared/schema";
-import { join } from "path";
+import mongoose from "mongoose";
 
-// Use SQLite for local development
-const dbPath = process.env.DATABASE_URL || join(process.cwd(), "portfolio.db");
-const sqlite = new Database(dbPath);
+// MongoDB connection
+const MONGO_URL = process.env.MONGO_URL || "mongodb://localhost:27017/portfolio";
 
-export const db = drizzle(sqlite, { schema });
+let isConnected = false;
+
+export async function connectDB() {
+  if (isConnected) {
+    return;
+  }
+
+  try {
+    await mongoose.connect(MONGO_URL);
+    isConnected = true;
+    console.log("[database] MongoDB connected successfully");
+  } catch (error) {
+    console.error("[database] MongoDB connection error:", error);
+    throw error;
+  }
+}
+
+// Export mongoose for use in other files
+export { mongoose };
+export const db = mongoose;
