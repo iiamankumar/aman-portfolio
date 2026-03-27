@@ -19,9 +19,10 @@ import logoSvg from "@assets/logo.svg";
 // Use the professional photo from customer assets
 const profileImg = "https://customer-assets.emergentagent.com/job_portfolio-backend-8/artifacts/p72a597e_Professional%20Photo.jpg";
 const indiaMapImg = "https://customer-assets.emergentagent.com/job_portfolio-backend-8/artifacts/3kriexdl_glowing_blue_india_map.png";
-import travelImg from "@assets/stock_images/mountain_hiking_adve_6f90633c.jpg";
-import codeImg from "@assets/20251113_141130_0000_1769020836354.png";
-import liftImg from "@assets/stock_images/weightlifting_gym_fi_328813c9.jpg";
+// Personal photos for hobby cards
+const travelImg = "https://customer-assets.emergentagent.com/job_portfolio-backend-8/artifacts/3oibcqfv_IMG20260322142744%20%281%29%20%281%29%20%282%29%20%281%29.jpg"; // Casual Venom t-shirt photo
+const codeImg = "https://customer-assets.emergentagent.com/job_portfolio-backend-8/artifacts/qq0spe5h_Professional%20Photo.jpg"; // Professional suit photo
+const liftImg = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80"; // Gym/fitness image
 // Valam song cover image
 const musicImg = "https://customer-assets.emergentagent.com/job_portfolio-backend-8/artifacts/a45rma0c_ab67616d0000b27350ce95062d66f316cc362571~2_1769021981633%20%281%29.jpeg";
 
