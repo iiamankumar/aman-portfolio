@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import type { Express, Request } from "express";
 import type { Server } from "http";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
@@ -61,9 +61,12 @@ export async function registerRoutes(
     res.json(entries);
   });
 
-  app.post(api.guestbook.submit.path, isAuthenticated, async (req: any, res) => {
+  app.post(api.guestbook.submit.path, isAuthenticated, async (req: Request, res) => {
     try {
-      const user = req.user.claims;
+      const user = req.user?.claims;
+      if (!user) {
+        return res.status(401).json({ message: 'User not authenticated' });
+      }
       const messageSchema = z.object({ message: z.string().min(1).max(500) });
       const { message } = messageSchema.parse(req.body);
       
