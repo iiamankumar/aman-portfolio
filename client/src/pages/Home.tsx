@@ -16,8 +16,9 @@ import { Footer } from "@/components/Footer";
 import { ArrowRight, Mail, MapPin, Star, Code2, Briefcase, Rocket, Copy, CheckCheck } from "lucide-react";
 import { Link } from "wouter";
 import logoSvg from "@assets/logo.svg";
-import profileImg from "@assets/20251113_141130_0000_1769028514939.png";
-import indiaMapImg from "@assets/generated_images/glowing_blue_india_map.png";
+// Use the professional photo from customer assets
+const profileImg = "https://customer-assets.emergentagent.com/job_portfolio-backend-8/artifacts/p72a597e_Professional%20Photo.jpg";
+const indiaMapImg = "https://customer-assets.emergentagent.com/job_portfolio-backend-8/artifacts/3kriexdl_glowing_blue_india_map.png";
 import travelImg from "@assets/stock_images/mountain_hiking_adve_6f90633c.jpg";
 import codeImg from "@assets/20251113_141130_0000_1769020836354.png";
 import liftImg from "@assets/stock_images/weightlifting_gym_fi_328813c9.jpg";
@@ -269,6 +270,57 @@ export default function Home() {
         </div>
       </section>
 
+      {/* FROM CONCEPT TO PRODUCTION Banner */}
+      <section className="py-8 px-6 max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          className="bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-pink-600/10 rounded-3xl p-12 border border-white/10 relative overflow-hidden"
+        >
+          {/* Animated background effect */}
+          <div className="absolute inset-0 opacity-30">
+            <motion.div 
+              animate={{ 
+                backgroundPosition: ['0% 0%', '100% 100%'],
+              }}
+              transition={{ duration: 10, repeat: Infinity, repeatType: 'reverse' }}
+              className="absolute inset-0"
+              style={{
+                backgroundImage: 'radial-gradient(circle at center, rgba(255,255,255,0.1) 1px, transparent 1px)',
+                backgroundSize: '50px 50px'
+              }}
+            />
+          </div>
+          
+          <div className="relative z-10 text-center flex flex-col md:flex-row items-center justify-center gap-6">
+            {/* Profile photo */}
+            <motion.div
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              className="w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden border-4 border-blue-500/30 shadow-2xl shadow-blue-500/20"
+            >
+              <img 
+                src={profileImg} 
+                alt="Aman Kumar"
+                className="w-full h-full object-cover object-center"
+              />
+            </motion.div>
+            
+            {/* Text */}
+            <div className="text-center md:text-left">
+              <h2 className="text-4xl md:text-6xl font-bold mb-2">
+                FROM CONCEPT TO
+              </h2>
+              <h2 className="text-4xl md:text-6xl font-bold">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
+                  PRODUCTION
+                </span>
+              </h2>
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
       {/* Bento Grid Section */}
       <section className="py-16 px-6 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -340,6 +392,63 @@ export default function Home() {
                   </motion.div>
                 );
               })}
+            </div>
+          </motion.div>
+
+          {/* Last Played Music Card */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            whileHover={{ scale: 1.02 }}
+            className="md:col-span-1 lg:col-span-2 bg-[#111] rounded-3xl p-8 border border-white/5 transition-all duration-500 relative overflow-hidden"
+            data-testid="card-last-played"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-full bg-pink-500/20 flex items-center justify-center">
+                <svg className="w-5 h-5 text-pink-500" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold">Last Played</h3>
+            </div>
+            
+            <div className="flex flex-col items-center justify-center py-4">
+              {/* Vinyl Record Animation */}
+              <div className="relative w-48 h-48 mb-6">
+                {/* Rotating vinyl */}
+                <motion.div 
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-0 rounded-full bg-gradient-to-br from-gray-900 via-gray-800 to-black border-8 border-gray-900"
+                >
+                  {/* Vinyl grooves */}
+                  <div className="absolute inset-0 rounded-full" style={{
+                    background: 'repeating-radial-gradient(circle at center, transparent 0px, transparent 2px, rgba(255,255,255,0.05) 2px, rgba(255,255,255,0.05) 4px)'
+                  }} />
+                  
+                  {/* Center label with album art */}
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full overflow-hidden border-4 border-gray-900 shadow-xl">
+                    <img 
+                      src={musicImg} 
+                      alt="Valam by Arijit Singh"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  
+                  {/* Center dot */}
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-gray-400" />
+                </motion.div>
+              </div>
+              
+              <div className="text-center">
+                <p className="text-white/50 text-sm mb-1">Last Played</p>
+                <p className="text-white font-semibold text-lg">
+                  <span className="text-pink-400">Valam</span> by <span className="text-blue-400">Arijit Singh</span>
+                </p>
+                <p className="text-white/40 text-sm mt-1">from Made In China</p>
+              </div>
             </div>
           </motion.div>
 
