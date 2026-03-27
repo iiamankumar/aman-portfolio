@@ -22,7 +22,8 @@ const indiaMapImg = "https://customer-assets.emergentagent.com/job_portfolio-bac
 import travelImg from "@assets/stock_images/mountain_hiking_adve_6f90633c.jpg";
 import codeImg from "@assets/20251113_141130_0000_1769020836354.png";
 import liftImg from "@assets/stock_images/weightlifting_gym_fi_328813c9.jpg";
-import musicImg from "@assets/ab67616d0000b27350ce95062d66f316cc362571~2_1769021981633.jpeg";
+// Valam song cover image
+const musicImg = "https://customer-assets.emergentagent.com/job_portfolio-backend-8/artifacts/a45rma0c_ab67616d0000b27350ce95062d66f316cc362571~2_1769021981633%20%281%29.jpeg";
 
 const lifestyleSlides = [
   { image: travelImg, label: "I Travel" },
