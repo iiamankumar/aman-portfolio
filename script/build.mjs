@@ -1,6 +1,11 @@
 import { build as esbuild } from "esbuild";
 import { build as viteBuild } from "vite";
 import { rm, readFile } from "fs/promises";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const projectRoot = path.resolve(__dirname, "..");
 
 // server deps to bundle to reduce openat(2) syscalls
 // which helps cold start times
@@ -32,7 +37,22 @@ const allowlist = [
   "zod-validation-error",
 ];
 
+const pathAliasPlugin = {
+  name: "path-alias",
+  setup(build) {
+    // Handle @shared imports
+    build.onResolve({ filter: /^@shared\// }, (args) => {
+      const modulePath = args.path.slice(8); // Remove @shared/
+      return {
+        path: path.resolve(projectRoot, "shared", modulePath),
+      };
+    });
+  },
+};
+
 async function buildAll() {
+  process.chdir(projectRoot);
+  
   await rm("dist", { recursive: true, force: true });
 
   console.log("building client...");
@@ -58,9 +78,7 @@ async function buildAll() {
     minify: true,
     external: externals,
     logLevel: "info",
-    alias: {
-      "@shared": "./shared",
-    },
+    plugins: [pathAliasPlugin],
   });
 }
 
